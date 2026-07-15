@@ -86,6 +86,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .app-navigation>a.active,.app-navigation .nav-section>a.active{background:#eee7f7;color:#563979}
 .app-navigation>a.active>b,.app-navigation .nav-section>a.active>b{border-color:#d9cbea;color:#7657a6}
 .app-navigation .nav-section>a.active:after{background:#7657a6}
+.app-navigation .nav-section>a>b svg{display:block;width:21px;height:21px}
+@media(max-width:860px){.app-navigation .nav-section>a>b{width:30px;height:30px}.app-navigation .nav-section>a>b svg{width:22px;height:22px}}
 .app-topbar{border-bottom-color:#e5dfea;background:rgba(255,255,255,.82)}
 .account>span{background:#eee7f7;color:#68478f}.account button{border-color:#e2dbe8;color:#675d70}
 .portfolio-hero{background:radial-gradient(circle at 74% 0,rgba(200,171,232,.23),transparent 20rem),linear-gradient(135deg,#332344,#5d3e79);box-shadow:0 20px 55px rgba(60,40,81,.18)}
