@@ -46,3 +46,61 @@ body{line-height:1.55;text-rendering:optimizeLegibility}button,input,select,text
 @media(max-width:460px){.operation-summary{grid-template-columns:1fr}.metric-grid{gap:8px}.metric-card{min-height:120px}.property-card>footer{grid-template-columns:1fr}.property-card footer>a{grid-column:auto}.hero-actions{flex-direction:column}.hero-actions a{width:100%}.public-header{height:74px}.brand-copy small{display:none}.history-bars>div{min-width:70px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 @media(forced-colors:active){.operation-status,.status-badge,.gap-label,.cash-status{border:1px solid currentColor}.app-navigation .nav-section>a.active{outline:2px solid currentColor}}
+
+/* Lavender banking theme */
+:root{
+  --ink:#211a2d;
+  --muted:#756d80;
+  --line:#e6e0ec;
+  --canvas:#f7f5fa;
+  --surface:#fff;
+  --green:#7657a6;
+  --dark:#493365;
+  --soft:#f0eafb;
+  --danger:#a84255;
+  --shadow:0 22px 60px rgba(62,43,84,.11)
+}
+html,body{background:var(--canvas)}
+body{font-family:"SF Arabic","Segoe UI",Tahoma,Arial,sans-serif}
+::selection{background:#ded0f2;color:#2d1d42}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline-color:rgba(118,87,166,.3)}
+.landing{background:radial-gradient(circle at 85% 16%,rgba(184,156,222,.24),transparent 30rem),linear-gradient(180deg,#fdfcff,#f7f4fb)}
+.brand-symbol{background:linear-gradient(145deg,#8a69b8,#493365);box-shadow:0 10px 26px rgba(83,55,117,.22)}
+.primary-button,.small-primary{background:linear-gradient(140deg,#8060ad,#5d407f);box-shadow:0 12px 28px rgba(86,58,119,.2)}
+.secondary-button{border-color:#e2d9eb;background:rgba(255,255,255,.86)}
+.eyebrow i{background:#a889d2;box-shadow:0 0 0 6px rgba(168,137,210,.14)}
+.hero-visual:before{background:rgba(194,168,226,.28)}
+.pulse-card{border-color:#e8e0ef}.pulse-card header>b{background:#f0eafa;color:#684991}
+.score-ring{background:radial-gradient(circle,#fff 60%,transparent 61%),conic-gradient(#8060ad 0 81%,#eee8f3 81%)}
+.bars>i{background:#f0ecf4}.bars>i b{background:linear-gradient(90deg,#b79bdd,#73539f)}
+.insights div{border-color:#ebe4f1;background:#fdfcff}
+.auth-story{background:radial-gradient(circle at 18% 15%,rgba(197,165,232,.2),transparent 24rem),linear-gradient(145deg,#2d1f3f,#5b3d78)}
+.auth-story>div>p,.auth-story li>b{color:#d9c5ef}
+.auth-story li small{color:rgba(255,255,255,.68)}
+.text-field,.switcher select{border-color:#e3dce9;background:#fcfbfd}.text-field:focus,.switcher select:focus{border-color:#9676bd;box-shadow:0 0 0 4px rgba(118,87,166,.1)}
+.form-message.success{background:#f0eafa;color:#523570}.auth-switch a,.back{color:#7657a6}
+.protected,.app-shell{background:radial-gradient(circle at 88% 7%,rgba(192,166,224,.16),transparent 27rem),var(--canvas)}
+.app-sidebar{border-left-color:#e4deea;background:rgba(253,252,255,.97)}
+.sidebar-brand{border-color:#e9e3ee}.sidebar-help{border-color:#e4dbea;background:linear-gradient(145deg,#f3eef9,#fff)}
+.app-navigation>a:hover,.app-navigation .nav-section>a:hover{background:#f2edf8}
+.app-navigation>a.active,.app-navigation .nav-section>a.active{background:#eee7f7;color:#563979}
+.app-navigation>a.active>b,.app-navigation .nav-section>a.active>b{border-color:#d9cbea;color:#7657a6}
+.app-navigation .nav-section>a.active:after{background:#7657a6}
+.app-topbar{border-bottom-color:#e5dfea;background:rgba(255,255,255,.82)}
+.account>span{background:#eee7f7;color:#68478f}.account button{border-color:#e2dbe8;color:#675d70}
+.portfolio-hero{background:radial-gradient(circle at 74% 0,rgba(200,171,232,.23),transparent 20rem),linear-gradient(135deg,#332344,#5d3e79);box-shadow:0 20px 55px rgba(60,40,81,.18)}
+.portfolio-hero p,.portfolio-hero .hero-orbit small{color:#d8c4eb}.portfolio-hero>div:first-child>span{color:rgba(255,255,255,.76)}
+.hero-orbit>div{background:radial-gradient(circle,#4b3263 57%,transparent 58%),conic-gradient(#c4a3e4 0 var(--score),rgba(255,255,255,.13) var(--score) 100%)}
+.metric-card,.property-card,.form-panel,.info-card,.unit-card,.lease-card,.operation-group,.operation-summary article,.schedule-card,.expense-card,.benchmark-card,.market-table-panel,.history-property,.snapshot-list>article{border-color:#e5deeb;box-shadow:0 8px 24px rgba(66,45,88,.035)}
+.metric-card:hover,.property-card:hover,.unit-card:hover,.lease-card:hover,.schedule-card:hover,.expense-card:hover,.benchmark-card:hover,.snapshot-list>article:hover{border-color:#cfc0df;box-shadow:0 14px 30px rgba(71,48,94,.09)}
+.metric-card.good{border-bottom-color:#9877be}.metric-card.good>strong,.positive,.section-heading p,.section-heading>a,.record-details>summary,.collection-details>summary,.expense-card>details>summary,.benchmark-card>details>summary{color:#70509a!important}
+.property-tabs a.active{border-color:#7657a6;color:#5c3e7d}
+.operation-filter button,.org-switch button{border-color:#7657a6;background:#7657a6;color:#fff}
+.operation-group>summary i,.permissions>header>div>b,.capability-grid article>b{background:#f0eafa;color:#6d4b96}
+.schedule-card>footer>i b,.history-bars i{background:linear-gradient(#a889d2,#684990)}
+.market-head,.schedule-progress>div,.payment-records>article{background:#f7f3fa}
+.market-table{scrollbar-color:#bda8d1 #f1edf5}
+.cash-green,.operation-paid,.operation-expense-paid,.status-occupied,.status-active{background:#eee8f7;color:#634287}
+.gap-label.near{background:#eee8f7;color:#634287}
+.skip-link{background:#493365}
+@media(max-width:860px){.app-sidebar{border-top-color:#ded5e7;background:rgba(255,255,255,.97);box-shadow:0 -10px 30px rgba(68,46,91,.1)}}
