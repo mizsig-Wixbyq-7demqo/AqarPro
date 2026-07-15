@@ -35,12 +35,18 @@ function id(data:FormData,name:string) {
   return value;
 }
 function optionalPastDate(data:FormData,name:string){const value=text(data,name,10);if(!value)return null;if(!isValidIsoDate(value)||value>getRiyadhToday())throw new Error("التاريخ غير صحيح أو يقع في المستقبل.");return value;}
-function target(propertyId?:string,tab?:string) { return propertyId?`/properties/${propertyId}${tab?`?tab=${tab}`:""}`:"/properties"; }
+function target(propertyId?:string,tab?:string,anchor?:string) { return propertyId?`/properties/${propertyId}${tab?`?tab=${tab}`:""}${anchor?`#${anchor}`:""}`:`/properties${anchor?`#${anchor}`:""}`; }
+function submitChoice(data:FormData){const value=text(data,"submitChoice",24);return value==="continue"||value==="add-another"?value:"stay";}
 function finish(path:string,message:string,tone:"success"|"error"="success"):never {
-  const separator=path.includes("?")?"&":"?";
-  redirect(`${path}${separator}${tone}=${encodeURIComponent(message)}`);
+  const [base="/",fragment]=path.split("#",2),separator=base.includes("?")?"&":"?";
+  redirect(`${base}${separator}${tone}=${encodeURIComponent(message)}${fragment?`#${fragment}`:""}`);
 }
-function isRedirectSignal(error:unknown) {\n  if(!(error instanceof Error))return false;\n  const digest=(error as Error&{digest?:unknown}).digest;\n  return error.message==="NEXT_REDIRECT"||error.message.startsWith("NEXT_REDIRECT:")||(typeof digest==="string"&&digest.startsWith("NEXT_REDIRECT"));\n}\nfunction friendlyError(error:{code?:string}|null,fallback:string) {
+function isRedirectSignal(error:unknown) {
+  if(!(error instanceof Error))return false;
+  const digest=(error as Error&{digest?:unknown}).digest;
+  return error.message==="NEXT_REDIRECT"||error.message.startsWith("NEXT_REDIRECT:")||(typeof digest==="string"&&digest.startsWith("NEXT_REDIRECT"));
+}
+function friendlyError(error:{code?:string}|null,fallback:string) {
   if(error?.code==="23505")return "يوجد سجل آخر بالرقم نفسه.";
   if(error?.code==="23P01")return "الوحدة مرتبطة بعقد متداخل في الفترة نفسها.";
   if(error?.code==="42501")return "ليس لديك الصلاحية اللازمة لهذه العملية.";
@@ -48,7 +54,7 @@ function isRedirectSignal(error:unknown) {\n  if(!(error instanceof Error))retur
 }
 
 export async function createPropertyAction(data:FormData) {
-  const context=await requireCapability("properties:write"),path="/properties";
+  const context=await requireCapability("properties:write"),path=target(undefined,undefined,"new-property");
   try{
     const name=text(data,"name",100),propertyType=text(data,"propertyType",60),city=text(data,"city",60),district=text(data,"district",60);
     if(name.length<2||!propertyType||!city||!district)finish(path,"أكمل اسم العقار ونوعه والمدينة والحي.","error");
@@ -56,7 +62,8 @@ export async function createPropertyAction(data:FormData) {
     const{data:property,error}=await supabase.from("properties").insert({organization_id:context.activeMembership.organizationId,name,property_type:propertyType,city,district,address:optionalText(data,"address",220),acquisition_date:optionalPastDate(data,"acquisitionDate"),notes:optionalText(data,"notes",700)}).select("id").single();
     if(error||!property)finish(path,friendlyError(error,"تعذر إضافة العقار."),"error");
     revalidatePath("/dashboard");revalidatePath("/properties");
-    finish(`/properties/${property.id}`,"تمت إضافة العقار بنجاح.");
+    const destination=submitChoice(data)==="continue"?target(property.id,"units","new-unit"):target(property.id,"overview");
+    finish(destination,"تمت إضافة العقار بنجاح، ويمكنك إكمال بياناته في أي وقت.");
   }catch(error){if(isRedirectSignal(error))throw error;finish(path,error instanceof Error?error.message:"راجع بيانات العقار.","error");}
 }
 
@@ -92,13 +99,14 @@ function unitPayload(data:FormData) {
 }
 
 export async function createUnitAction(data:FormData) {
-  const context=await requireCapability("properties:write"),propertyId=id(data,"propertyId"),path=target(propertyId,"units");
+  const context=await requireCapability("properties:write"),propertyId=id(data,"propertyId"),path=target(propertyId,"units","new-unit");
   try{
     const value=unitPayload(data),supabase=await createClient();
     const{error}=await supabase.rpc("create_unit_with_history",{p_organization_id:context.activeMembership.organizationId,p_property_id:propertyId,p_unit_number:value.unitNumber,p_unit_type:value.unitType,p_bedrooms:value.bedrooms,p_bathrooms:value.bathrooms,p_area_sqm:value.areaSqm,p_floor_number:value.floorNumber,p_status:value.status,p_current_annual_rent:value.currentAnnualRent,p_notes:value.notes??"",p_effective_date:getRiyadhToday()});
     if(error)finish(path,friendlyError(error,"تعذر إضافة الوحدة."),"error");
     revalidatePath("/dashboard");revalidatePath(`/properties/${propertyId}`);revalidatePath("/properties");
-    finish(path,"تمت إضافة الوحدة وربط سجل حالتها.");
+    const choice=submitChoice(data),destination=choice==="continue"?target(propertyId,"leases","new-tenant"):choice==="add-another"?target(propertyId,"units","new-unit"):target(propertyId,"units");
+    finish(destination,"تمت إضافة الوحدة وربط سجل حالتها. ظهرت الآن ضمن العقار.");
   }catch(error){if(isRedirectSignal(error))throw error;finish(path,error instanceof Error?error.message:"راجع بيانات الوحدة.","error");}
 }
 
@@ -127,18 +135,18 @@ export async function deleteUnitAction(data:FormData) {
 }
 
 export async function createTenantAction(data:FormData) {
-  const context=await requireCapability("leases:write"),propertyId=id(data,"propertyId"),path=target(propertyId,"leases"),fullName=text(data,"fullName",120);
+  const context=await requireCapability("leases:write"),propertyId=id(data,"propertyId"),path=target(propertyId,"leases","new-tenant"),fullName=text(data,"fullName",120);
   if(fullName.length<3)finish(path,"اكتب اسم المستأجر كاملًا.","error");
   const email=optionalText(data,"email",160);if(email&&!isValidEmail(email))finish(path,"البريد الإلكتروني للمستأجر غير صحيح.","error");
   const supabase=await createClient();
   const{error}=await supabase.from("tenants").insert({organization_id:context.activeMembership.organizationId,full_name:fullName,phone:optionalText(data,"phone",30),email,national_id_reference:optionalText(data,"nationalIdReference",60),notes:optionalText(data,"notes",500)});
   if(error)finish(path,friendlyError(error,"تعذر إضافة المستأجر."),"error");
   revalidatePath(`/properties/${propertyId}`);
-  finish(path,"تمت إضافة المستأجر، ويمكنك الآن إنشاء العقد.");
+  finish(submitChoice(data)==="continue"?target(propertyId,"leases","new-lease"):target(propertyId,"leases"),"تمت إضافة المستأجر، ويمكن إنشاء العقد الآن أو لاحقًا.");
 }
 
 export async function createLeaseAction(data:FormData) {
-  const context=await requireCapability("leases:write"),propertyId=id(data,"propertyId"),path=target(propertyId,"leases");
+  const context=await requireCapability("leases:write"),propertyId=id(data,"propertyId"),path=target(propertyId,"leases","new-lease");
   try{
     const unitId=id(data,"unitId"),tenantId=id(data,"tenantId"),contractNumber=text(data,"contractNumber",80),startDate=text(data,"startDate",10),endDate=text(data,"endDate",10),annualRent=number(data,"annualRent",{min:.01})!,frequency=text(data,"paymentFrequency",30) as PaymentFrequency,customInstallments=integer(data,"customInstallments",{min:1,max:24,optional:true}),securityDeposit=number(data,"securityDeposit",{optional:true})??0,gracePeriodDays=integer(data,"gracePeriodDays",{max:365,optional:true})??0;
     if(!contractNumber||!paymentFrequencies.includes(frequency))throw new Error("راجع رقم العقد ودورية الدفع.");
@@ -146,7 +154,7 @@ export async function createLeaseAction(data:FormData) {
     const{error}=await supabase.rpc("create_lease_with_schedule",{p_organization_id:context.activeMembership.organizationId,p_property_id:propertyId,p_unit_id:unitId,p_tenant_id:tenantId,p_contract_number:contractNumber,p_start_date:startDate,p_end_date:endDate,p_annual_rent:annualRent,p_payment_frequency:frequency,p_security_deposit:securityDeposit,p_grace_period_days:gracePeriodDays,p_status:"active",p_schedule:schedule,p_effective_date:getRiyadhToday()});
     if(error)finish(path,friendlyError(error,"تعذر إنشاء العقد وجدول الدفعات."),"error");
     revalidatePath("/dashboard");revalidatePath(`/properties/${propertyId}`);revalidatePath("/properties");
-    finish(path,`تم إنشاء العقد وجدول من ${schedule.length} دفعة.`);
+    finish(submitChoice(data)==="continue"?target(propertyId,"payments"):target(propertyId,"leases"),`تم إنشاء العقد وجدول من ${schedule.length} دفعة، وانعكس على العقار.`);
   }catch(error){if(isRedirectSignal(error))throw error;finish(path,error instanceof Error?error.message:"راجع بيانات العقد.","error");}
 }
 
