@@ -88,6 +88,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .app-navigation .nav-section>a.active:after{background:#7657a6}
 .app-navigation .nav-section>a>b svg{display:block;width:21px;height:21px}
 @media(max-width:860px){.app-navigation .nav-section>a>b{width:30px;height:30px}.app-navigation .nav-section>a>b svg{width:22px;height:22px}}
+.setup-journey{margin:18px 0;padding:18px 20px;border:1px solid #e2d8ed;border-radius:17px;background:linear-gradient(135deg,#fff,#f7f2fb)}
+.setup-journey>header{display:flex;align-items:center;justify-content:space-between;gap:20px}.setup-journey>header>div{display:grid;gap:4px}.setup-journey>header b{font-size:14px}.setup-journey>header span{color:#7e7288;font-size:12px}.setup-journey>header>strong{min-width:max-content;padding:7px 10px;border-radius:99px;background:#eee6f6;color:#68458b;font-size:12px}
+.setup-journey ol{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0 0;padding:0;list-style:none}.setup-journey li a{min-height:54px;display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid #e6dfeb;border-radius:12px;background:#fff;color:#756a7d;font-size:12px;font-weight:800}.setup-journey li i{display:grid;width:27px;height:27px;flex:0 0 27px;place-items:center;border-radius:50%;background:#f0edf2;color:#807887;font-style:normal}.setup-journey li.done a{border-color:#d8c9e6;color:#573a73}.setup-journey li.done i{background:#7657a6;color:#fff}.workflow-actions{flex-wrap:wrap}.workflow-actions small{width:100%}
+@media(max-width:720px){.setup-journey{padding:16px}.setup-journey>header{align-items:flex-start}.setup-journey ol{grid-template-columns:1fr 1fr}.setup-journey li a{min-height:50px}.workflow-actions{display:grid;grid-template-columns:1fr}.workflow-actions button{width:100%}}
 .app-topbar{border-bottom-color:#e5dfea;background:rgba(255,255,255,.82)}
 .account>span{background:#eee7f7;color:#68478f}.account button{border-color:#e2dbe8;color:#675d70}
 .portfolio-hero{background:radial-gradient(circle at 74% 0,rgba(200,171,232,.23),transparent 20rem),linear-gradient(135deg,#332344,#5d3e79);box-shadow:0 20px 55px rgba(60,40,81,.18)}
