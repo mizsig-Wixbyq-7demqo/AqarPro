@@ -1,0 +1,1 @@
+import Link from "next/link";export default function Page(){return <main className="denied-page"><b>!</b><p className="eyebrow">صلاحية غير متاحة</p><h1>هذه العملية خارج صلاحيات دورك</h1><span>لم يتم تنفيذ أي تغيير. اطلب من مالك المنشأة أو مديرها مراجعة دورك.</span><Link className="primary-button" href="/dashboard">العودة إلى المنشأة</Link></main>}

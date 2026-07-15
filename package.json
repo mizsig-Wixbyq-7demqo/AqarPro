@@ -1,0 +1,55 @@
+{
+  "name": "aqarpro",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AqarPro multi-tenant rental property operations and financial performance platform",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "install:ci": "bash scripts/install-ci.sh",
+    "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vite",
+    "build": "bash scripts/build-verified.sh",
+    "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
+    "test": "npm run test:migrations && npm run test:unit && npm run build && node --test tests/rendered-html.test.mjs",
+    "test:migrations": "node --test tests/migrations.smoke.test.mjs tests/seed-data.test.mjs tests/rls.test.mjs tests/stage-five-workflows.test.mjs tests/stage-six-workflows.test.mjs",
+    "test:unit": "node --test tests/scoring.test.ts tests/snapshot-persistence.test.ts tests/auth-permissions.test.ts tests/payment-schedule.test.ts tests/stage-seven-security.test.ts",
+    "typecheck": "tsc --noEmit",
+    "validate:artifact": "bash scripts/validate-artifact.sh",
+    "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
+    "supabase:start": "npx --yes supabase@2.109.1 start",
+    "supabase:stop": "npx --yes supabase@2.109.1 stop",
+    "db:migrate": "npx --yes supabase@2.109.1 migration up --local",
+    "db:reset": "npx --yes supabase@2.109.1 db reset --local",
+    "db:seed": "npx --yes supabase@2.109.1 db reset --local",
+    "db:lint": "npx --yes supabase@2.109.1 db lint --local",
+    "audit:prod": "npm audit --omit=dev --audit-level=high"
+  },
+  "dependencies": {
+    "@supabase/ssr": "0.12.3",
+    "@supabase/supabase-js": "2.110.5",
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.37.1",
+    "@electric-sql/pglite": "0.5.4",
+    "@tailwindcss/postcss": "4.2.1",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.2",
+    "@vitejs/plugin-rsc": "0.5.26",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.6",
+    "react-server-dom-webpack": "19.2.6",
+    "tailwindcss": "4.2.1",
+    "typescript": "5.9.3",
+    "vinext": "0.0.50",
+    "vite": "8.0.13",
+    "wrangler": "4.92.0"
+  },
+  "type": "module",
+  "displayName": "AqarPro \u2014 \u0639\u0642\u0627\u0631 \u0628\u0631\u0648"
+}

@@ -1,0 +1,1 @@
+export default function Loading(){return <main className="loading-shell" aria-label="جارٍ تحميل بيانات المحفظة"><header><i/><span/></header><section><div/><div/><div/></section><aside>{Array.from({length:8},(_,index)=><i key={index}/>)}</aside></main>}

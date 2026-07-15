@@ -1,0 +1,13 @@
+import assert from"node:assert/strict";import test from"node:test";import{assertCan,can,isOrganizationRole,roleCapabilities}from"../lib/auth/permissions.ts";import{isProtectedPath,resolvePostAuthPath,sanitizeNextPath}from"../lib/auth/navigation.ts";
+test("owner all",()=>{assert.equal(can("owner","organization:delete"),true);assert.ok(roleCapabilities.owner.length>roleCapabilities.manager.length)});
+test("manager limited",()=>{assert.equal(can("manager","properties:write"),true);assert.equal(can("manager","organization:delete"),false)});
+test("accountant finance",()=>{assert.equal(can("accountant","finance:write"),true);assert.equal(can("accountant","finance:delete"),false)});
+test("market source deletion is owner only",()=>{assert.equal(can("owner","benchmarks:delete"),true);assert.equal(can("manager","benchmarks:delete"),false)});
+test("viewer read only",()=>assert.deepEqual(roleCapabilities.viewer,["portfolio:read"]));
+test("guard rejects",()=>assert.throws(()=>assertCan("viewer","finance:write"),/الصلاحية/));
+test("role validation",()=>{assert.equal(isOrganizationRole("owner"),true);assert.equal(isOrganizationRole("admin"),false)});
+test("new user onboarding",()=>assert.equal(resolvePostAuthPath(0),"/onboarding"));
+test("member dashboard",()=>assert.equal(resolvePostAuthPath(1),"/dashboard"));
+test("external next denied",()=>{assert.equal(sanitizeNextPath("https://evil.test"),"/dashboard");assert.equal(sanitizeNextPath("//evil.test"),"/dashboard")});
+test("internal next allowed",()=>assert.equal(sanitizeNextPath("/dashboard?tab=a"),"/dashboard?tab=a"));
+test("protected matcher",()=>{for(const path of ["/dashboard","/properties","/properties/one","/payments","/expenses","/market-benchmarks","/score-history"])assert.equal(isProtectedPath(path),true);assert.equal(isProtectedPath("/login"),false)});
