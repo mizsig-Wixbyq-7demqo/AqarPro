@@ -40,7 +40,7 @@ function finish(path:string,message:string,tone:"success"|"error"="success"):nev
   const separator=path.includes("?")?"&":"?";
   redirect(`${path}${separator}${tone}=${encodeURIComponent(message)}`);
 }
-function friendlyError(error:{code?:string}|null,fallback:string) {
+function isRedirectSignal(error:unknown) {\n  if(!(error instanceof Error))return false;\n  const digest=(error as Error&{digest?:unknown}).digest;\n  return error.message==="NEXT_REDIRECT"||error.message.startsWith("NEXT_REDIRECT:")||(typeof digest==="string"&&digest.startsWith("NEXT_REDIRECT"));\n}\nfunction friendlyError(error:{code?:string}|null,fallback:string) {
   if(error?.code==="23505")return "يوجد سجل آخر بالرقم نفسه.";
   if(error?.code==="23P01")return "الوحدة مرتبطة بعقد متداخل في الفترة نفسها.";
   if(error?.code==="42501")return "ليس لديك الصلاحية اللازمة لهذه العملية.";
@@ -57,7 +57,7 @@ export async function createPropertyAction(data:FormData) {
     if(error||!property)finish(path,friendlyError(error,"تعذر إضافة العقار."),"error");
     revalidatePath("/dashboard");revalidatePath("/properties");
     finish(`/properties/${property.id}`,"تمت إضافة العقار بنجاح.");
-  }catch(error){if(error instanceof Error&&error.message==="NEXT_REDIRECT")throw error;finish(path,error instanceof Error?error.message:"راجع بيانات العقار.","error");}
+  }catch(error){if(isRedirectSignal(error))throw error;finish(path,error instanceof Error?error.message:"راجع بيانات العقار.","error");}
 }
 
 export async function updatePropertyAction(data:FormData) {
@@ -70,7 +70,7 @@ export async function updatePropertyAction(data:FormData) {
     if(error)finish(path,friendlyError(error,"تعذر تحديث العقار."),"error");
     revalidatePath("/dashboard");revalidatePath("/properties");revalidatePath(`/properties/${propertyId}`);
     finish(path,"تم حفظ بيانات العقار.");
-  }catch(error){if(error instanceof Error&&error.message==="NEXT_REDIRECT")throw error;finish(path,error instanceof Error?error.message:"راجع بيانات العقار.","error");}
+  }catch(error){if(isRedirectSignal(error))throw error;finish(path,error instanceof Error?error.message:"راجع بيانات العقار.","error");}
 }
 
 export async function deletePropertyAction(data:FormData) {
@@ -99,7 +99,7 @@ export async function createUnitAction(data:FormData) {
     if(error)finish(path,friendlyError(error,"تعذر إضافة الوحدة."),"error");
     revalidatePath("/dashboard");revalidatePath(`/properties/${propertyId}`);revalidatePath("/properties");
     finish(path,"تمت إضافة الوحدة وربط سجل حالتها.");
-  }catch(error){if(error instanceof Error&&error.message==="NEXT_REDIRECT")throw error;finish(path,error instanceof Error?error.message:"راجع بيانات الوحدة.","error");}
+  }catch(error){if(isRedirectSignal(error))throw error;finish(path,error instanceof Error?error.message:"راجع بيانات الوحدة.","error");}
 }
 
 export async function updateUnitAction(data:FormData) {
@@ -110,7 +110,7 @@ export async function updateUnitAction(data:FormData) {
     if(error)finish(path,friendlyError(error,"تعذر تحديث الوحدة."),"error");
     revalidatePath("/dashboard");revalidatePath(`/properties/${propertyId}`);revalidatePath("/properties");
     finish(path,"تم حفظ الوحدة وتحديث تاريخ حالتها.");
-  }catch(error){if(error instanceof Error&&error.message==="NEXT_REDIRECT")throw error;finish(path,error instanceof Error?error.message:"راجع بيانات الوحدة.","error");}
+  }catch(error){if(isRedirectSignal(error))throw error;finish(path,error instanceof Error?error.message:"راجع بيانات الوحدة.","error");}
 }
 
 export async function deleteUnitAction(data:FormData) {
@@ -147,7 +147,7 @@ export async function createLeaseAction(data:FormData) {
     if(error)finish(path,friendlyError(error,"تعذر إنشاء العقد وجدول الدفعات."),"error");
     revalidatePath("/dashboard");revalidatePath(`/properties/${propertyId}`);revalidatePath("/properties");
     finish(path,`تم إنشاء العقد وجدول من ${schedule.length} دفعة.`);
-  }catch(error){if(error instanceof Error&&error.message==="NEXT_REDIRECT")throw error;finish(path,error instanceof Error?error.message:"راجع بيانات العقد.","error");}
+  }catch(error){if(isRedirectSignal(error))throw error;finish(path,error instanceof Error?error.message:"راجع بيانات العقد.","error");}
 }
 
 export async function updateLeaseAction(data:FormData) {
@@ -161,7 +161,7 @@ export async function updateLeaseAction(data:FormData) {
     if(error)finish(path,friendlyError(error,"تعذر تعديل العقد."),"error");
     revalidatePath(`/properties/${propertyId}`);
     finish(path,"تم حفظ تعديلات العقد.");
-  }catch(error){if(error instanceof Error&&error.message==="NEXT_REDIRECT")throw error;finish(path,error instanceof Error?error.message:"راجع بيانات العقد.","error");}
+  }catch(error){if(isRedirectSignal(error))throw error;finish(path,error instanceof Error?error.message:"راجع بيانات العقد.","error");}
 }
 
 export async function terminateLeaseAction(data:FormData) {
